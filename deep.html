@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Random Code Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #f43f5e;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        .settings-icon {
+            background: rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .settings-icon:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(30deg);
+        }
+
+        .main-content {
+            padding: 2rem;
+        }
+
+        .output-container {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .code-output {
+            width: 100%;
+            min-height: 120px;
+            padding: 1.5rem;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--dark);
+            resize: none;
+            transition: all 0.3s ease;
+        }
+
+        .code-output:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        select, input {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .checkbox-group label {
+            font-weight: 400;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+        }
+
+        .settings-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .settings-panel.open {
+            max-height: 500px;
+            padding: 1.5rem 2rem;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--dark);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-success {
+            background: var(--success);
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+        }
+
+        /* Animation for generated text */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Random Code Generator</h1>
+            <div class="settings-icon" id="settingsToggle">
+                <i class="fas fa-cog"></i>
+            </div>
+        </header>
+
+        <div class="settings-panel" id="settingsPanel">
+            <div class="settings-grid">
+                <div class="control-group">
+                    <label for="language">Language</label>
+                    <select id="language">
+                        <option value="javascript">JavaScript</option>
+                        <option value="python">Python</option>
+                        <option value="java">Java</option>
+                        <option value="csharp">C#</option>
+                        <option value="php">PHP</option>
+                        <option value="cpp">C++</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="codeType">Code Type</label>
+                    <select id="codeType">
+                        <option value="function">Function</option>
+                        <option value="class">Class</option>
+                        <option value="algorithm">Algorithm</option>
+                        <option value="snippet">Code Snippet</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="complexity">Complexity</label>
+                    <select id="complexity">
+                        <option value="simple">Simple</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="complex">Complex</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="output-container">
+                <textarea class="code-output" id="codeOutput" readonly placeholder="Your generated code will appear here..."></textarea>
+                <button class="copy-btn" id="copyBtn">
+                    <i class="far fa-copy"></i>
+                    Copy
+                </button>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label for="codeLength">Code Length</label>
+                    <input type="range" id="codeLength" min="1" max="5" value="3" step="1">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="includeComments" checked>
+                        <label for="includeComments">Include Comments</label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="includeImports" checked>
+                        <label for="includeImports">Include Imports</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="includeDocstrings">
+                        <label for="includeDocstrings">Include Docstrings</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn btn-primary" id="generateBtn">
+                    <i class="fas fa-bolt"></i>
+                    Generate Code
+                </button>
+                <button class="btn btn-secondary" id="clearBtn">
+                    <i class="fas fa-trash-alt"></i>
+                    Clear
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Copied to clipboard!</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const settingsToggle = document.getElementById('settingsToggle');
+            const settingsPanel = document.getElementById('settingsPanel');
+            const generateBtn = document.getElementById('generateBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const codeOutput = document.getElementById('codeOutput');
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+
+            // Toggle settings panel
+            settingsToggle.addEventListener('click', function() {
+                settingsPanel.classList.toggle('open');
+                this.querySelector('i').classList.toggle('fa-spin');
+            });
+
+            // Generate random code
+            generateBtn.addEventListener('click', function() {
+                const language = document.getElementById('language').value;
+                const codeType = document.getElementById('codeType').value;
+                const complexity = document.getElementById('complexity').value;
+                const codeLength = document.getElementById('codeLength').value;
+                const includeComments = document.getElementById('includeComments').checked;
+                const includeImports = document.getElementById('includeImports').checked;
+                const includeDocstrings = document.getElementById('includeDocstrings').checked;
+
+                // Simulate loading
+                codeOutput.value = "Generating code...";
+                codeOutput.classList.remove('animate-fade');
+
+                // Simulate API call with timeout
+                setTimeout(() => {
+                    const generatedCode = generateRandomCode(language, codeType, complexity, codeLength, 
+                        includeComments, includeImports, includeDocstrings);
+                    
+                    codeOutput.value = generatedCode;
+                    codeOutput.classList.add('animate-fade');
+                }, 500);
+            });
+
+            // Clear output
+            clearBtn.addEventListener('click', function() {
+                codeOutput.value = '';
+                showToast('Cleared output', false);
+            });
+
+            // Copy to clipboard
+            copyBtn.addEventListener('click', function() {
+                if (!codeOutput.value) return;
+                
+                navigator.clipboard.writeText(codeOutput.value).then(() => {
+                    copyBtn.classList.add('copied');
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    showToast('Copied to clipboard!', true);
+                    
+                    setTimeout(() => {
+                        copyBtn.classList.remove('copied');
+                        copyBtn.innerHTML = '<i class="far fa-copy"></i> Copy';
+                    }, 2000);
+                });
+            });
+
+            // Show toast notification
+            function showToast(message, isSuccess) {
+                toastMessage.textContent = message;
+                toast.className = isSuccess ? 'toast toast-success show' : 'toast show';
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+
+            // Random code generator function
+            function generateRandomCode(language, codeType, complexity, length, includeComments, includeImports, includeDocstrings) {
+                // This is a simplified version - in a real app you would have more sophisticated generation
+                const languages = {
+                    javascript: {
+                        function: generateJSFunction(complexity, length, includeComments, includeDocstrings),
+                        class: generateJSClass(complexity, length, includeComments, includeDocstrings),
+                        algorithm: generateJSAlgorithm(complexity, length, includeComments),
+                        snippet: generateJSSnippet(complexity, length, includeComments)
+                    },
+                    python: {
+                        function: generatePythonFunction(complexity, length, includeComments, includeDocstrings),
+                        class: generatePythonClass(complexity, length, includeComments, includeDocstrings),
+                        algorithm: generatePythonAlgorithm(complexity, length, includeComments),
+                        snippet: generatePythonSnippet(complexity, length, includeComments)
+                    },
+                    java: {
+                        function: generateJavaFunction(complexity, length, includeComments, includeDocstrings),
+                        class: generateJavaClass(complexity, length, includeComments, includeDocstrings),
+                        algorithm: generateJavaAlgorithm(complexity, length, includeComments),
+                        snippet: generateJavaSnippet(complexity, length, includeComments)
+                    }
+                };
+
+                let code = '';
+                
+                if (includeImports) {
+                    code += getImports(language, complexity) + '\n\n';
+                }
+                
+                code += languages[language][codeType];
+                
+                return code;
+            }
+
+            // Example generators for JavaScript
+            function generateJSFunction(complexity, length, includeComments, includeDocstrings) {
+                const functionNames = ['calculateTotal', 'processData', 'filterResults', 'transformInput', 'validateForm'];
+                const paramNames = ['input', 'data', 'items', 'value', 'params'];
+                const operations = [
+                    'return input * 2;',
+                    'return data.filter(item => item.active);',
+                    'const result = items.reduce((acc, val) => acc + val, 0);\n    return result;',
+                    'if (value > 100) return "Large";\n    if (value > 50) return "Medium";\n    return "Small";',
+                    'const processed = params.map(p => ({ ...p, id: generateId() }));\n    return processed;'
+                ];
+                
+                const functionName = functionNames[Math.floor(Math.random() * functionNames.length)];
+                const params = complexity === 'simple' ? paramNames[0] : 
+                             complexity === 'medium' ? `${paramNames[0]}, ${paramNames[1]}` : 
+                             `${paramNames[0]}, ${paramNames[1]}, ${paramNames[2]}`;
+                
+                const operation = operations[Math.floor(Math.random() * operations.length)];
+                
+                let code = '';
+                
+                if (includeDocstrings) {
+                    code += '/**\n * ';
+                    code += complexity === 'simple' ? 'Simple function that ' : 
+                            complexity === 'medium' ? 'Intermediate function that ' : 
+                            'Complex function that ';
+                    code += `performs an operation on ${params.split(',').length > 1 ? 'multiple parameters' : 'a parameter'}\n`;
+                    code += ' * @param {' + (complexity === 'simple' ? 'number' : 'object') + '} ' + params.split(',')[0].trim() + '\n';
+                    if (complexity !== 'simple') {
+                        code += ' * @param {string} ' + params.split(',')[1].trim() + '\n';
+                    }
+                    if (complexity === 'complex') {
+                        code += ' * @param {Array} ' + params.split(',')[2].trim() + '\n';
+                    }
+                    code += ' * @returns {' + (operation.includes('filter') ? 'Array' : operation.includes('*') ? 'number' : 'string') + '} Result of the operation\n';
+                    code += ' */\n';
+                }
+                
+                code += `function ${functionName}(${params}) {\n    ${operation}\n}`;
+                
+                if (includeComments && Math.random() > 0.3) {
+                    code += '\n\n// Example usage:\n';
+                    const exampleInput = complexity === 'simple' ? '42' : 
+                                        complexity === 'medium' ? '{ name: "Test", active: true }, "filter"' : 
+                                        '[1, 2, 3], "sum", true';
+                    code += `// const result = ${functionName}(${exampleInput});\n`;
+                    code += '// console.log(result);';
+                }
+                
+                return code;
+            }
+
+            function generateJSClass(complexity, length, includeComments, includeDocstrings) {
+                // Similar implementation for class generation
+                return "// Class generation would be implemented here";
+            }
+
+            // Similar functions for other languages and code types would be implemented
+
+            function getImports(language, complexity) {
+                const imports = {
+                    javascript: complexity === 'simple' ? '// No imports needed for simple functions' : 
+                              complexity === 'medium' ? 'const { v4: uuidv4 } = require("uuid");' : 
+                              'const { v4: uuidv4 } = require("uuid");\nconst axios = require("axios");\nconst lodash = require("lodash");',
+                    python: complexity === 'simple' ? '# No imports needed for simple functions' : 
+                           complexity === 'medium' ? 'import random\nfrom datetime import datetime' : 
+                           'import random\nfrom datetime import datetime\nimport numpy as np\nimport pandas as pd',
+                    java: complexity === 'simple' ? '// No imports needed for simple functions' : 
+                         complexity === 'medium' ? 'import java.util.ArrayList;\nimport java.util.List;' : 
+                         'import java.util.*;\nimport java.time.*;\nimport org.apache.commons.lang3.RandomStringUtils;'
+                };
+                
+                return imports[language];
+            }
+
+            // Initialize with a simple example
+            codeOutput.value = generateRandomCode('javascript', 'function', 'medium', 3, true, true, true);
+        });
+    </script>
+</body>
+</html>
